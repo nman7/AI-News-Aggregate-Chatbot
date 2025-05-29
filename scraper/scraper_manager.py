@@ -9,9 +9,7 @@ def run_all_scrapers():
         "The Guardian": {}
     }
 
-
-
-    # Scrape ABC News
+    Scrape ABC News
     for category, url in ABC_CATEGORY_URLS.items():
         print(f"🔎 Scraping ABC - {category}...")
         try:
@@ -20,6 +18,16 @@ def run_all_scrapers():
             print(f"✅ {len(articles)} articles added under ABC News → {category}")
         except Exception as e:
             print(f"❌ Failed ABC scrape for category {category}: {e}")
+
+    # Scrape The Guardian
+    for category, url in GUARDIAN_CATEGORY_URLS.items():
+        print(f"🔎 Scraping Guardian - {category}...")
+        try:
+            articles = fetch_guardian_articles(category_name=category, url=url)
+            combined_data["The Guardian"][category] = articles
+            print(f"✅ {len(articles)} articles added under The Guardian → {category}")
+        except Exception as e:
+            print(f"❌ Failed Guardian scrape for category {category}: {e}")
 
     # Save to file
     os.makedirs("data", exist_ok=True)
