@@ -42,8 +42,8 @@ def run_all_scrapers():
             print(f"❌ Failed New Daily scrape for category {category}: {e}")
 
     # Save all combined data
-    os.makedirs("data", exist_ok=True)
-    with open("data/combined_articles.json", "w", encoding="utf-8") as f:
+    os.makedirs("scraper/news_data", exist_ok=True)
+    with open("scraper/news_data/combined_articles.json", "w", encoding="utf-8") as f:
         json.dump(combined_data, f, indent=2)
 
     print("🎉 All data saved to data/combined_articles.json")
