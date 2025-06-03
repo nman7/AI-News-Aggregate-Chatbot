@@ -15,7 +15,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Required for CORS
+    allow_origins=["http://localhost:3000","https://ai-news-aggregate-chatbot.onrender.com"],  # Required for CORS
     allow_credentials=False,                  # Set to True only if using cookies/auth
     allow_methods=["*"],
     allow_headers=["*"],
