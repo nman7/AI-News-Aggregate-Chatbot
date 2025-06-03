@@ -23,8 +23,8 @@ app.add_middleware(
 
 # ------------------ EMBEDDING MODEL & FAISS ------------------ #
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FAISS_INDEX_PATH = os.path.join(BASE_DIR, "../scraper/rag_index/highlight_index.faiss")
-METADATA_PATH = os.path.join(BASE_DIR, "../scraper/news_data/combined_articles_with_summary_highlights.json")
+FAISS_INDEX_PATH = "scraper/rag_index/highlight_index.faiss"
+METADATA_PATH = "scraper/news_data/combined_articles_with_summary_highlights.json"
 EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
 GEN_MODEL_NAME = "google/flan-t5-base"
 # ------------------ LOAD HIGHLIGHTS ------------------ #
