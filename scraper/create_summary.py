@@ -5,6 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
 # === CONFIGURATION ===
 MODEL_DIR = "scraper/summarizer_model/distilbart-cnn-12-6"
+MODEL_NAME = "sshleifer/distilbart-cnn-12-6"
 INPUT_JSON = "scraper/news_data/combined_articles.json"
 OUTPUT_JSON = "scraper/news_data/combined_articles_with_summary.json"
 MAX_CHARS = 500  # truncate long raw_text for speed
@@ -16,8 +17,8 @@ start_time = time.time()
 
 # === LOAD LOCAL MODEL ===
 print("🧠 Loading model from local directory...")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_DIR)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)  #MODEL_DIR
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)  # MODEL_DIR
 summarizer = pipeline("summarization", model=model, tokenizer=tokenizer, device=-1)
 
 # === LOAD JSON DATA ===
