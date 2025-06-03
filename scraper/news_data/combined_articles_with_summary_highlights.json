@@ -1,0 +1,91 @@
+[
+  {
+    "title": "Sermanni departs Matildas pinching himself after 'phenomenal' privilege",
+    "summary": "Tom Sermanni has paid tribute to the \"phenomenal\" crowds who support the Matildas after his final game in charge of the women's national team. Australia's 4-1 win over Argentina marked his 151st game as coach or interim coach of the Matildas, in stints dating back to 1994. Joe Montemurro now takes over as Matildas coach from the Scottish-born Sermanni.",
+    "category": "sport",
+    "url": "https://www.abc.net.au/news/2025-06-03/sermanni-pinching-himself-after-phenomenal-matildas-privilege/105370230",
+    "sources": [
+      "ABC News",
+      "The New Daily",
+      "The Guardian"
+    ],
+    "frequency": 6
+  },
+  {
+    "title": "'Something new to me': Kasatkina praises Aussie fans after French Open exit",
+    "summary": "Daria Kasatkina lost to Mirra Andreeva 6-3, 7-5 to bow out of the French Open. The new Australian paid tribute to her Aussie fans, saying the support was not something she had felt before.",
+    "category": "sport",
+    "url": "https://www.abc.net.au/news/2025-06-03/french-open-tennis-daria-kasatkina-tribute-to-australia/105369520",
+    "sources": [
+      "ABC News",
+      "The Guardian"
+    ],
+    "frequency": 2
+  },
+  {
+    "title": "Minimum wage to rise above inflation, ASX rises \u2014 as it happened",
+    "summary": "Australian shares have closed higher . Minimum and award wages will lift 3.5 per cent from July 1 . Prices current around 4:35pm AEST .",
+    "category": "business",
+    "url": "https://www.abc.net.au/news/2025-06-03/asx-markets-business-live-news-june-3/105366014",
+    "sources": [
+      "ABC News",
+      "The Guardian"
+    ],
+    "frequency": 2
+  },
+  {
+    "title": "Trump tariff uncertainty brings weaker outlook for Australia, RBA official says",
+    "summary": "The amount of uncertainty in the global economy about Donald Trump's tariffs has contributed to a weaker outlook for Australia's economy, a Reserve Bank official says. Assistant governor Sarah Hunter said Australia was unlikely to face direct negative impacts.",
+    "category": "business",
+    "url": "https://www.abc.net.au/news/2025-06-03/reserve-bank-australia-trump-tariffs-higher-uncertainty-impact/105370286",
+    "sources": [
+      "ABC News",
+      "The Guardian"
+    ],
+    "frequency": 2
+  },
+  {
+    "title": "How does Labor's new super tax work and why is it controversial?",
+    "summary": "",
+    "category": "business",
+    "url": "https://www.abc.net.au/news/2025-06-03/labor-super-tax-explained/105368436",
+    "sources": [
+      "ABC News",
+      "The New Daily"
+    ],
+    "frequency": 3
+  },
+  {
+    "title": "Natural disasters cost Australia\u2019s economy $2.2bn in first half of 2025, new Treasury analysis shows",
+    "summary": "Six months of natural disasters in 2025 have cost the economy $2.2bn, Treasury analysis shows . Wild weather has repeatedly battered the Australian east coast this year .",
+    "category": "business",
+    "url": "https://www.theguardian.com/business/2025/jun/01/natural-disasters-cost-australias-economy-22bn-in-first-half-of-2025-new-treasury-analysis-shows",
+    "sources": [
+      "The New Daily",
+      "The Guardian"
+    ],
+    "frequency": 2
+  },
+  {
+    "title": "Our top photos from WA in May, featuring live music and a Guinness World Record",
+    "summary": "Members of Perth-based Wadumbah Indigenous dance group share stories of the Aboriginal Dreamtime . They perform in a special performance this month for Reconciliation week .",
+    "category": "music",
+    "url": "https://www.abc.net.au/news/2025-06-01/wa-photos-of-the-month-may/105334768",
+    "sources": [
+      "ABC News"
+    ],
+    "frequency": 1,
+    "priority_keyword": true
+  },
+  {
+    "title": "'Can't walk': Heartbreaking Ozzy Osbourne update",
+    "summary": "Sharon Osbourne said the band\u2019s long-awaited reunion was emotional for her husband . Ozzy Osbourne can no longer walk due to the worsening of his Parkinson's disease . \u2018Parkinson\u2019's is a progressive disease,\u2019 she said .",
+    "category": "music",
+    "url": "https://thenewdaily.com.au/life/entertainment/music/2025/02/07/ozzy-osbourne-parkinsons-walk",
+    "sources": [
+      "The New Daily"
+    ],
+    "frequency": 1,
+    "priority_keyword": true
+  }
+]
