@@ -62,7 +62,7 @@ except Exception as e:
 # ------------------ INPUT FORMAT ------------------ #
 class ChatQuery(BaseModel):
     query: str
-    top_k: int = 2
+    top_k: int = 3
 
 # ------------------ CHAT QUERY ENDPOINT ------------------ #
 @app.post("/api/chat-query")
@@ -70,25 +70,32 @@ def chat_query(payload: ChatQuery):
     if not faiss_index or not embed_model or not gen_model:
         return {"error": "One or more models not loaded properly."}
 
+    # 🔍 Step 1: Search similar news using FAISS
     query_embedding = embed_model.encode([payload.query])[0].astype("float32")
     D, I = faiss_index.search(np.array([query_embedding]), payload.top_k)
 
-    # 🟢 Sort by priority_keyword flag first, then keep original FAISS order
-    top_items = [metadata[idx] for idx in I[0] if 0 <= idx < len(metadata)]
-    top_items.sort(key=lambda x: not x.get("priority_keyword", False))  # False → True first
+    # 🧠 Step 2: Build context with labeled summaries
+    context = ""
+    for idx in I[0]:
+        if 0 <= idx < len(metadata):
+            item = metadata[idx]
+            summary = item.get("summary", "").strip()
+            title = item.get("title", "").strip()
+            category = item.get("category", "").strip().title()
+            if summary:
+                context += f"- ({category}) {title}: {summary}\n"
 
-    # 🟢 Combine context from sorted top items
-    context = "\n\n".join(item["summary"] for item in top_items if "summary" in item)
+    # 📢 Step 3: Prepare prompt
+    prompt = f"You are a helpful assistant. Based on the news below, answer the following question.\n\nNews:\n{context}\n\nQuestion: {payload.query}\nAnswer:"
 
-    prompt = f"Question: {payload.query}\nContext: {context}\nAnswer:"
-
-
+    # 🧪 Step 4: Generate answer
     try:
         result = gen_model(prompt, max_length=200)[0]["generated_text"].strip()
     except Exception as e:
         return {"error": f"Text generation failed: {e}"}
 
+    # ✅ Return result with related sources
     return {
         "answer": result,
-        "sources": top_items  # return sorted source list too
+        "sources": [metadata[idx] for idx in I[0] if 0 <= idx < len(metadata)]
     }
