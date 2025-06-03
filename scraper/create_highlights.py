@@ -6,7 +6,9 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load the local model
-model = SentenceTransformer("scraper/highlights_model/all-MiniLM-L6-v2")
+# model = SentenceTransformer("scraper/highlights_model/all-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
 
 # Load articles
 with open("scraper/news_data/combined_articles_with_summary.json", "r", encoding="utf-8") as f:

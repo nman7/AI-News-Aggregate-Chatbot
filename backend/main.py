@@ -8,23 +8,29 @@ import numpy as np
 import faiss
 
 from sentence_transformers import SentenceTransformer
-from llama_cpp import Llama
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
 # ------------------ FASTAPI SETUP ------------------ #
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["http://localhost:3000"],  # Required for CORS
+    allow_credentials=False,                  # Set to True only if using cookies/auth
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# ------------------ EMBEDDING MODEL & FAISS ------------------ #
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "../scraper/rag_index/highlight_index.faiss")
+METADATA_PATH = os.path.join(BASE_DIR, "../scraper/news_data/combined_articles_with_summary_highlights.json")
+EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
+GEN_MODEL_NAME = "google/flan-t5-base"
 # ------------------ LOAD HIGHLIGHTS ------------------ #
 @app.get("/api/highlights")
 def get_highlights():
-    with open("../scraper/news_data/combined_articles_with_summary_highlights.json", "r", encoding="utf-8") as f:
+    with open(METADATA_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 @app.get("/")
@@ -32,75 +38,64 @@ def root():
     return {"message": "News Highlights API is running."}
 
 # ------------------ EMBEDDING MODEL & FAISS ------------------ #
-FAISS_INDEX_PATH = "../scraper/rag_index/highlight_index.faiss"
-METADATA_PATH = "../scraper/news_data/combined_articles_with_summary_highlights.json"
-EMBED_MODEL_PATH = "../scraper/highlights_model/all-MiniLM-L6-v2"
-GEN_MODEL_PATH = "models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+
+
+
+gen_model = None
 
 try:
     faiss_index = faiss.read_index(FAISS_INDEX_PATH)
     with open(METADATA_PATH, "r", encoding="utf-8") as f:
         metadata = json.load(f)
-    embed_model = SentenceTransformer(EMBED_MODEL_PATH)
+    embed_model = SentenceTransformer(EMBED_MODEL_NAME)
 
-    # Load Mistral GGUF Model
-    llm = Llama(
-        model_path=GEN_MODEL_PATH,
-        n_ctx=2048,
-        n_threads=8,  # adjust per CPU
-        use_mlock=True
-    )
+    tokenizer = AutoTokenizer.from_pretrained(GEN_MODEL_NAME)
+    model = AutoModelForSeq2SeqLM.from_pretrained(GEN_MODEL_NAME)
+    gen_model = pipeline("text2text-generation", model=model, tokenizer=tokenizer)
+
     print("✅ Models loaded successfully")
 
 except Exception as e:
     print("❌ Failed to load models:", e)
-    faiss_index, metadata, embed_model, llm = None, [], None, None
+    faiss_index, metadata, embed_model, gen_model = None, [], None, None
 
 # ------------------ INPUT FORMAT ------------------ #
 class ChatQuery(BaseModel):
     query: str
-    top_k: int = 2
+    top_k: int = 3
 
 # ------------------ CHAT QUERY ENDPOINT ------------------ #
 @app.post("/api/chat-query")
 def chat_query(payload: ChatQuery):
-    if not faiss_index or not embed_model or not llm:
+    if not faiss_index or not embed_model or not gen_model:
         return {"error": "One or more models not loaded properly."}
 
-    # Embed query and search
+    # 🔍 Step 1: Search similar news using FAISS
     query_embedding = embed_model.encode([payload.query])[0].astype("float32")
     D, I = faiss_index.search(np.array([query_embedding]), payload.top_k)
 
-    # Prepare prompt pieces
-    prompt_prefix = f"Answer the question: {payload.query}\n\nContext:\n"
-    prompt_suffix = "\n\nAnswer:"
-    max_ctx_tokens = 2048
-    reserved_tokens_for_output = 400
-    available_ctx_tokens = max_ctx_tokens - reserved_tokens_for_output
-
-    # Build context dynamically based on token budget
+    # 🧠 Step 2: Build context with labeled summaries
     context = ""
     for idx in I[0]:
         if 0 <= idx < len(metadata):
-            passage = metadata[idx]["raw_text"]
-            temp_context = context + "\n\n" + passage
-            full_prompt = prompt_prefix + temp_context + prompt_suffix
-            token_count = len(llm.tokenize(full_prompt.encode("utf-8")))
+            item = metadata[idx]
+            summary = item.get("summary", "").strip()
+            title = item.get("title", "").strip()
+            category = item.get("category", "").strip().title()
+            if summary:
+                context += f"- ({category}) {title}: {summary}\n"
 
-            if token_count > available_ctx_tokens:
-                break
-            context = temp_context.strip()
+    # 📢 Step 3: Prepare prompt
+    prompt = f"You are a helpful assistant. Based on the news below, answer the following question.\n\nNews:\n{context}\n\nQuestion: {payload.query}\nAnswer:"
 
-    # Final safe prompt
-    prompt = f"{prompt_prefix}{context}{prompt_suffix}"
-
+    # 🧪 Step 4: Generate answer
     try:
-        response = llm(prompt, max_tokens=400, stop=["</s>"])
-        generated = response["choices"][0]["text"].strip()
+        result = gen_model(prompt, max_length=200)[0]["generated_text"].strip()
     except Exception as e:
         return {"error": f"Text generation failed: {e}"}
 
+    # ✅ Return result with related sources
     return {
-        "answer": generated,
+        "answer": result,
         "sources": [metadata[idx] for idx in I[0] if 0 <= idx < len(metadata)]
     }

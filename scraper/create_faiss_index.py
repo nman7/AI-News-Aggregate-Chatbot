@@ -5,7 +5,8 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 # Load model
-model = SentenceTransformer("scraper/highlights_model/all-MiniLM-L6-v2")
+# model = SentenceTransformer("scraper/highlights_model/all-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Load highlights
 with open("scraper/news_data/combined_articles_with_summary_highlights.json", "r", encoding="utf-8") as f:
