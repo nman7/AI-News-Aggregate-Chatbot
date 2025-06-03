@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
 # === CONFIGURATION ===
 MODEL_DIR = "scraper/summarizer_model/distilbart-cnn-12-6"
-MODEL_NAME = "sshleifer/distilbart-cnn-12-6"
+MODEL_NAME = "t5-small" #"sshleifer/distilbart-cnn-12-6"
 INPUT_JSON = "scraper/news_data/combined_articles.json"
 OUTPUT_JSON = "scraper/news_data/combined_articles_with_summary.json"
 MAX_CHARS = 500  # truncate long raw_text for speed
