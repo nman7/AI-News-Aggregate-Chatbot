@@ -4,11 +4,12 @@ import time
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
 # === CONFIGURATION ===
-MODEL_DIR = "summarizer_model/distilbart-cnn-12-6"
+MODEL_DIR = "scraper/summarizer_model/distilbart-cnn-12-6"
 INPUT_JSON = "scraper/news_data/combined_articles.json"
 OUTPUT_JSON = "scraper/news_data/combined_articles_with_summary.json"
-MAX_CHARS = 1000  # truncate long raw_text for speed
+MAX_CHARS = 500  # truncate long raw_text for speed
 MAX_SUMMARY_WORDS = 60
+BATCH_SIZE = 8  # adjust as per RAM
 
 # === START TIMER ===
 start_time = time.time()
@@ -24,23 +25,35 @@ with open(INPUT_JSON, "r", encoding="utf-8") as f:
     data = json.load(f)
 
 updated_count = 0
+batch_number = 1
 
-# === GENERATE SUMMARIES ===
+# === GENERATE SUMMARIES IN BATCHES ===
 for source, categories in data.items():
     for category, articles in categories.items():
+        texts_to_summarize = []
+        article_refs = []
+
         for article in articles:
             if not article.get("summary") and article.get("raw_text"):
-                try:
-                    raw_text = article["raw_text"].replace("\n", " ").strip()
-                    if len(raw_text) < 50:
-                        continue  # skip very short text
+                raw_text = article["raw_text"].replace("\n", " ").strip()
+                if len(raw_text) < 50:
+                    continue  # skip very short text
 
-                    text = raw_text[:MAX_CHARS]
-                    result = summarizer(text, max_length=MAX_SUMMARY_WORDS, min_length=20, do_sample=False)
-                    article["summary"] = result[0]["summary_text"]
+                text = raw_text[:MAX_CHARS]
+                texts_to_summarize.append(text)
+                article_refs.append(article)
+
+        for i in range(0, len(texts_to_summarize), BATCH_SIZE):
+            batch = texts_to_summarize[i:i + BATCH_SIZE]
+            try:
+                results = summarizer(batch, max_length=MAX_SUMMARY_WORDS, min_length=20, do_sample=False)
+                for j, result in enumerate(results):
+                    article_refs[i + j]["summary"] = result["summary_text"]
                     updated_count += 1
-                except Exception as e:
-                    print(f"❌ Error summarizing: {article.get('url', 'unknown')} → {e}")
+                print(f"✅ Completed Batch #{batch_number}")
+                batch_number += 1
+            except Exception as e:
+                print(f"❌ Error summarizing batch starting at index {i}: {e}")
 
 # === SAVE UPDATED JSON ===
 with open(OUTPUT_JSON, "w", encoding="utf-8") as f:

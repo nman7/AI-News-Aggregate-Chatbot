@@ -6,10 +6,10 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load the local model
-model = SentenceTransformer("highlights_model/all-MiniLM-L6-v2")
+model = SentenceTransformer("scraper/highlights_model/all-MiniLM-L6-v2")
 
 # Load articles
-with open("news_data/combined_articles_with_summary.json", "r", encoding="utf-8") as f:
+with open("scraper/news_data/combined_articles_with_summary.json", "r", encoding="utf-8") as f:
     combined_data = json.load(f)
 
 # Collect all articles
@@ -28,7 +28,7 @@ for source, categories in combined_data.items():
                 "title": title,
                 "summary": summary,
                 "url": article["url"],
-                "raw_text": raw_text
+                # "raw_text": raw_text
             })
 
 print(f"✅ Total articles loaded: {len(all_articles)}")
@@ -41,7 +41,7 @@ embeddings = model.encode(texts, batch_size=16, show_progress_bar=True)
 sim_matrix = cosine_similarity(embeddings)
 
 # Cluster similar articles
-THRESHOLD = 0.70
+THRESHOLD = 0.60
 visited = set()
 clusters = []
 
@@ -92,7 +92,7 @@ for cluster in clusters:
         "summary": all_articles[main_idx]["summary"],
         "category": all_articles[main_idx]["category"],
         "url": all_articles[main_idx]["url"],
-        "raw_text": all_articles[main_idx]["raw_text"],
+        # "raw_text": all_articles[main_idx]["raw_text"],
         "sources": list(set(sources)),
         "frequency": len(cluster)
     })
@@ -107,14 +107,14 @@ for article in all_articles:
             "summary": article["summary"],
             "category": article["category"],
             "url": article["url"],
-            "raw_text": article["raw_text"],
+            # "raw_text": article["raw_text"],
             "sources": [article["source"]],
             "frequency": 1,
             "priority_keyword": True
         })
 
 # Save highlights
-with open("news_data/combined_articles_with_summary_highlights.json", "w", encoding="utf-8") as f:
+with open("scraper/news_data/combined_articles_with_summary_highlights.json", "w", encoding="utf-8") as f:
     json.dump(highlight_data, f, indent=2)
 
 print(f"📌 Highlights saved to scraper/news_data/combined_articles_with_summary_highlights.json ({len(highlight_data)} items)")
