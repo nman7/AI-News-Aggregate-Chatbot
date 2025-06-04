@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    container_name: news-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app  # ✅ This is the missing key!
+
+  frontend:
+    build: ./frontend
+    container_name: news-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
