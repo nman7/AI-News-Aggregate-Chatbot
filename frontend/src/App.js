@@ -9,7 +9,7 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get("https://ai-news-aggregate-chatbot.onrender.com/api/highlights")
+    axios.get("http://localhost:8000/api/highlights")
       .then(res => setHighlights(res.data))
       .catch(err => console.error("Failed to fetch highlights", err));
   }, []);
@@ -21,7 +21,7 @@ function App() {
     setSources([]);
 
     try {
-      const res = await axios.post("https://ai-news-aggregate-chatbot.onrender.com/api/chat-query", {
+      const res = await axios.post("http://localhost:8000/api/chat-query", {
         query,
         top_k: 3,
       });
