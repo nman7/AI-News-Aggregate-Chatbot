@@ -46,25 +46,66 @@ A full-stack AI-powered system that scrapes Australian news, summarizes daily hi
 
 ## 🚀 Quick Start (Docker)
 
-### Step 1: Clean existing containers (if any)
+A step-by-step guide to run the AI News Aggregator & Chatbot locally using Docker.
+
+---
+
+### 🧹 Step 1: Clean Existing Containers (Optional – if restarting from scratch)
 ```bash
+# Stop and remove all running containers
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)
+
+# Optionally remove all local Docker images
 docker rmi $(docker images -q) --force
 ```
 
-### Step 2: Build and start containers
+---
+
+### 🏗️ Step 2: Build and Start Backend + Frontend Containers
 ```bash
 docker-compose up --build
 ```
 
-### Step 3: Run the pipeline (ONLY FIRST TIME)
+- This will build and launch both the backend (FastAPI) and frontend (React via Nginx).
+- The backend logs should include:
+  ```
+  🚀 Starting FastAPI backend...
+  ```
+
+⚠️ **Note:** The backend server will not fully function until the pipeline is run once.
+
+---
+
+### ⚙️ Step 3: Run the Data Pipeline Inside Backend Container (Only First Time)
 ```bash
+# Access the backend container shell
 docker exec -it news-backend bash
+
+# Run the pipeline to scrape news, summarize articles, and build FAISS index
 python pipeline.py
 ```
 
-> ⚠️ The backend won't start correctly until the pipeline is run once and necessary JSON/FAISS files are created.
+📋 Sample Logs:
+```
+🧠 Loading summarization model...
+✅ Completed Batch #1
+📌 Highlights saved to combined_articles_with_summary_highlights.json
+✅ FAISS index and metadata saved to rag_index/
+```
+
+---
+
+### 🔁 Step 4: Restart Backend to Load Data
+```bash
+docker restart news-backend
+```
+
+---
+
+### 🌐 Access the Application
+- Frontend UI: [http://localhost:3000](http://localhost:3000)
+- API: [http://localhost:8000](http://localhost:8000/docs)
 
 ---
 
