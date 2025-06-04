@@ -95,16 +95,3 @@ ai-news-aggregator-chatbot/
 ├── frontend/             ← React app (build via Docker)
 ├── docker-compose.yml    ← Runs backend + frontend
 ```
-
----
-
-## 📬 Submission Instructions
-- Submit GitHub link + deployed URL (if any) to `info@foboh.com.au`
-- README must include instructions to run backend, pipeline, and frontend
-- Tests are optional, but bonus points if provided
-
----
-
-## 🧠 Credits
-- Developed for Foboh AI Challenge
-- Built by Nauman Mansuri
