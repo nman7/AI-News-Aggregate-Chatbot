@@ -101,3 +101,6 @@ ai-news-aggregator-chatbot/
 
 <img width="1512" alt="Screenshot 2025-06-04 at 10 47 13 PM" src="https://github.com/user-attachments/assets/7760794a-2e3c-4c8f-b59b-b3ff26f5115e" />
 
+---
+##  Youtube Link
+[Watch the demo video](https://www.youtube.com/watch?v=lXs2cByzz54)
