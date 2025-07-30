@@ -50,19 +50,7 @@ A step-by-step guide to run the AI News Aggregator & Chatbot locally using Docke
 
 ---
 
-### 🧹 Step 1: Clean Existing Containers (Optional – if restarting from scratch)
-```bash
-# Stop and remove all running containers
-docker stop $(docker ps -aq)
-docker rm $(docker ps -aq)
-
-# Optionally remove all local Docker images
-docker rmi $(docker images -q) --force
-```
-
----
-
-### 🏗️ Step 2: Build and Start Backend + Frontend Containers
+### 🏗️ Step 1: Build and Start Backend + Frontend Containers
 ```bash
 docker-compose up --build
 ```
@@ -77,7 +65,7 @@ docker-compose up --build
 
 ---
 
-### ⚙️ Step 3: Run the Data Pipeline Inside Backend Container (Only First Time)
+### ⚙️ Step 2: Run the Data Pipeline Inside Backend Container (Only First Time)
 ```bash
 # Access the backend container shell
 docker exec -it news-backend bash
@@ -96,7 +84,7 @@ python pipeline.py
 
 ---
 
-### 🔁 Step 4: Restart Backend to Load Data
+### 🔁 Step 3: Restart Backend to Load Data
 ```bash
 docker restart news-backend
 ```
